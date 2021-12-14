@@ -54,9 +54,24 @@
    (assert (UI-state (display FirstQuestion)
                      (relation-asserted first-choice)
                      (response UHPQ)
-                     (valid-answers UHPQ Modd EoU BBV Port))))
+                     (valid-answers UHPQ Modd EoU BBV Port))))  
 
-; YHPQ, Modd, EoU, BBV maja pytanie o Affordability                    
+
+;;;**************************
+;;;* Powtarzajace sie stany *
+;;;**************************
+
+;;; first-choice UHPQ/Modd/EoU/BBV/Port
+;;; affaffordability Yes/No
+;;; dual-extrusion Yes/No
+;;; makerBot Yes/No
+;;; DIY-ass Kit/Ass
+;;; big-build Yes/No
+;;; really-big-build Big/RBig
+
+;;; w ponizszych regulach modyfikować warunki logiczne przez dodawanie OR'ow
+
+;; affordability
 (defrule affordability-question ""
 
    (logical (first-choice ~Port))
@@ -67,7 +82,42 @@
                      (relation-asserted affordability)
                      (response No)
                      (valid-answers No Yes))))
-                     
+
+;; dual extursion
+(defrule dual-extrusion-question ""
+
+   (logical (affordability Yes)
+            (first-choice UHPQ))
+
+   =>
+
+   (assert (UI-state (display DualExtrusionQuest)
+                     (relation-asserted dual-extrusion)
+                     (response No)
+                     (valid-answers No Yes))))   
+
+;; makerBot 
+(defrule makerBot-question ""
+
+   (logical (first-choice Port))
+
+   =>
+
+   (assert (UI-state (display OposedToMakerBot)
+                     (relation-asserted makerBot)
+                     (response No)
+                     (valid-answers No Yes))))                     
+
+;; DIY vs assembled -> TO DO
+
+;; big build volume -> TO DO
+
+;; really big build volume -> TO DO
+
+;;;********************************
+;;;* Koniec powtarzajacych stanow *
+;;;********************************
+
 (defrule UHPQ-no-affordability ""
 
    (logical (affordability No)
@@ -76,23 +126,14 @@
    =>
 
       (assert (UI-state (display Ultimaker2)
-                     (state final))))
-                     
-(defrule UHPQ-affordability-yes ""
-
-   (logical (affordability Yes)
-            (first-choice UHPQ))
-
-   =>
-
-   (assert (UI-state (display DualExtrusionQuest)
-                     (relation-asserted dual-extrusion-hq)
-                     (response No)
-                     (valid-answers No Yes))))                     
+                     (state final))))                     
+                 
 
 (defrule UHQP-dual-extrusion-yes ""
 
-   (logical (dual-extrusion-hq Yes))
+   (logical (dual-extrusion Yes)
+            (affordability Yes)
+            (first-choice UHPQ))
 
    =>
 
@@ -103,7 +144,9 @@
                      
 (defrule UHPQ-dual-extrusion-no ""
 
-   (logical (dual-extrusion-hq No))
+   (logical (dual-extrusion No)
+            (affordability Yes)
+            (first-choice UHPQ))
 
    =>
 
@@ -111,16 +154,6 @@
                      (state final))))                     
    
                
-(defrule makerBot-question ""
-
-   (logical (first-choice Port))
-
-   =>
-
-   (assert (UI-state (display OposedToMakerBot)
-                     (relation-asserted makerBot)
-                     (response No)
-                     (valid-answers No Yes))))
 
 (defrule Port-no-makerBot ""
 
