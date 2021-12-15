@@ -56,7 +56,6 @@
                      (response UHPQ)
                      (valid-answers UHPQ Modd EoU BBV Port))))  
 
-
 ;;;**************************
 ;;;* Powtarzajace sie stany *
 ;;;**************************
@@ -98,9 +97,14 @@
 
 ;; makerBot 
 (defrule makerBot-question ""
-
-   (logical (first-choice Port))
-
+   (or
+      (logical (first-choice Port))
+      (and 
+            (logical (first-choice BBV)
+            (affordability No)
+            ) 
+      )
+   )
    =>
 
    (assert (UI-state (display OposedToMakerBot)
@@ -108,15 +112,51 @@
                      (response No)
                      (valid-answers No Yes))))                     
 
-;; DIY vs assembled -> TO DO
+;; DIY vs assembled
+(defrule DIY-assembled-question""
+   (logical 
+      (first-choice BBV)
+      (affordability Yes)
+      (really-big-build RBig)
+   )
+   =>
 
-;; big build volume -> TO DO
+   (assert (UI-state (display DIYvsAss)
+                     (relation-asserted DIY-ass)
+                     (response Kit)
+                     (valid-answers Kit Ass))))   
 
-;; really big build volume -> TO DO
+;; big build volume
+; (defrule big-build-question ""
+
+   
+   
+
+;    =>
+
+;    (assert (UI-state (display BigBuildVolume)
+;                      (relation-asserted big-build)
+;                      (response No)
+;                      (valid-answers No Yes))))  
+
+;; really big build volume
+(defrule really-big-build-question ""
+   (logical 
+      (first-choice BBV)
+      (affordability Yes)
+   )
+   =>
+
+   (assert (UI-state (display ReallyBigBuildVolume)
+                     (relation-asserted really-big-build)
+                     (response Big)
+                     (valid-answers RBig Big)))) 
 
 ;;;********************************
 ;;;* Koniec powtarzajacych stanow *
 ;;;********************************
+
+
 
 (defrule UHPQ-no-affordability ""
 
@@ -214,7 +254,64 @@
    (logical (port-vs-materials Portability))
    =>
         (assert (UI-state (display PrintrbotSimpleMetal)
-                     (state final))))                  
+                     (state final))))  
+
+(defrule big-build-no-affordability-no-makerBot ""
+
+   (logical (first-choice BBV)
+      (affordability No)
+      (makerBot Yes)
+   )
+
+   =>
+        (assert (UI-state (display PrintLeCrXL)
+                     (state final))))  
+
+(defrule big-build-no-affordability-makerBot ""
+   (logical (first-choice BBV)
+         (affordability No)
+         (makerBot No)
+      )
+
+      =>
+         (assert (UI-state (display PrintMkrRepZ18)
+                        (state final)))
+)
+
+(defrule big-build-affordability-bigV ""
+   (logical (first-choice BBV)
+         (affordability Yes)
+         (really-big-build Big)
+      )
+
+      =>
+         (assert (UI-state (display RigidbotBig)
+                        (state final)))
+)
+
+(defrule big-build-affordability-really-big-assembled ""
+   (logical (first-choice BBV)
+         (affordability Yes)
+         (really-big-build RBig)
+         (DIY-ass Ass)
+      )
+
+      =>
+         (assert (UI-state (display WanhaoDuplicator5)
+                        (state final)))
+)
+(defrule big-build-affordability-really-big-kit ""
+   (logical (first-choice BBV)
+         (affordability Yes)
+         (really-big-build RBig)
+         (DIY-ass Kit)
+      )
+
+      =>
+         (assert (UI-state (display SMCRMv2)
+                        (state final)))
+)
+
                      
 ;;;*************************
 ;;;* GUI INTERACTION RULES *
