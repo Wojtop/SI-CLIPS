@@ -1,4 +1,3 @@
-
 ;;;======================================================
 ;;;   Automotive Expert System
 ;;;
@@ -312,7 +311,544 @@
                         (state final)))
 )
 
-                     
+ 
+ 
+ 
+ 
+ ;;;druga na lewo
+ 
+(defrule DIY-kit ""
+
+   (logical 
+            (first-choice Modd)
+            (or (affordability Yes) (affordability No)))
+
+   =>
+
+   (assert (UI-state (display DIYvsAss)
+                     (relation-asserted mod-diy)
+                     (response Kit)
+                     (valid-answers Kit Ass))))   
+
+(defrule noaf-ass ""
+   (logical (first-choice Modd)
+         (affordability No)
+         (mod-diy Ass)
+      )
+
+      =>
+         (assert (UI-state (display LulzT4)
+                        (state final)))
+)
+(defrule noaf-kit ""
+   (logical (first-choice Modd)
+         (affordability No)
+         (mod-diy Kit)
+      )
+
+      =>
+         (assert (UI-state (display LulzKI)
+                        (state final)))
+)
+
+(defrule af-ass ""
+   (logical (first-choice Modd)
+         (affordability Yes)
+         (mod-diy Ass)
+      )
+
+      =>
+         (assert (UI-state (display R3D)
+                        (state final)))
+)
+
+(defrule af-kit ""
+
+   (logical 
+            (first-choice Modd)
+            (affordability Yes)
+            (mod-diy Kit))
+
+   =>
+
+   (assert (UI-state (display volvsprint)
+                     (relation-asserted mod-diy-bvps)
+                     (response Speed)
+                     (valid-answers Speed BVolume)))) 
+
+(defrule af-kit-speed ""
+   (logical (first-choice Modd)
+         (affordability Yes)
+         (mod-diy Kit)
+         (mod-diy-bvps Speed)
+      )
+
+      =>
+         (assert (UI-state (display VallK82)
+                        (state final)))
+)
+
+(defrule af-kit-volume ""
+
+   (logical 
+            (first-choice Modd)
+            (affordability Yes)
+            (mod-diy Kit)
+            (mod-diy-bvps BVolume))
+
+   =>
+
+   (assert (UI-state (display BvolumevsLotmore)
+                     (relation-asserted mod-diy-bvps-bvL)
+                     (response LMore)
+                     (valid-answers LMore LOTM)))) 
+
+(defrule af-kit-vol-LOT ""
+(logical (first-choice Modd)
+      (affordability Yes)
+      (mod-diy Kit)
+      (mod-diy-bvps BVolume)
+      (mod-diy-bvps-bvL LOTM)
+   )
+
+   =>
+      (assert (UI-state (display RigidbotBig)
+                     (state final)))
+) 
+
+(defrule af-kit-volume-lm ""
+
+   (logical 
+            (first-choice Modd)
+            (affordability Yes)
+            (mod-diy Kit)
+            (mod-diy-bvps BVolume)
+            (mod-diy-bvps-bvL LMore))
+
+   =>
+
+   (assert (UI-state (display CompvsComm)
+                     (relation-asserted mod-diy-bvps-bvL-mpmm)
+                     (response Cmp)
+                     (valid-answers Cmp Cmm)))) 
+
+(defrule af-kit-vol-LOT-Comm ""
+(logical (first-choice Modd)
+      (affordability Yes)
+      (mod-diy Kit)
+      (mod-diy-bvps BVolume)
+      (mod-diy-bvps-bvL LMore)
+      (mod-diy-bvps-bvL-mpmm Cmm)
+   )
+
+   =>
+      (assert (UI-state (display RigiReg)
+                     (state final)))
+) 
+
+(defrule af-kit-vol-LOT-Cmp ""
+(logical (first-choice Modd)
+      (affordability Yes)
+      (mod-diy Kit)
+      (mod-diy-bvps BVolume)
+      (mod-diy-bvps-bvL LMore)
+      (mod-diy-bvps-bvL-mpmm Cmp)
+   )
+
+   =>
+      (assert (UI-state (display PMetalP)
+                     (state final)))
+) 
+
+ ;srodek                     
+(defrule eou-fol ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability No))
+
+   =>
+
+   (assert (UI-state (display OposedToMakerBot)
+                     (relation-asserted eou-aff-op)
+                     (response No)
+                     (valid-answers No Yes))))
+
+(defrule eou-nop ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op No)
+   )
+
+   =>
+      (assert (UI-state (display MRep2)
+                     (state final)))
+) 
+
+(defrule eou-op ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+   )
+
+   =>
+
+   (assert (UI-state (display MakClone)
+                     (relation-asserted eou-aff-op-cl)
+                     (response NW)
+                     (valid-answers NW TF))))
+
+(defrule eou-op-cl-tf ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl TF)
+   )
+
+   =>
+      (assert (UI-state (display FfC)
+                     (state final)))
+) 
+
+(defrule eou-op-cl-nw ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+   )
+
+   =>
+
+   (assert (UI-state (display DualExtrusionQuest)
+                     (relation-asserted eou-aff-op-nw)
+                     (response No)
+                     (valid-answers No Yes))))
+
+(defrule eou-op-cl-nw-pick ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw No)
+   )
+
+   =>
+
+   (assert (UI-state (display MakePick)
+                     (relation-asserted eou-aff-op-nw-mp)
+                     (response Lfrog)
+                     (valid-answers Lfrog AHDX SMCNC))))
+
+(defrule eou-op-cl-tf-lfrog ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw No)
+         (eou-aff-op-nw-mp Lfrog)
+   )
+
+   =>
+      (assert (UI-state (display LfrogA)
+                     (state final)))
+) 
+
+(defrule eou-op-cl-tf-ahdx ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw No)
+         (eou-aff-op-nw-mp AHDX)
+   )
+
+   =>
+      (assert (UI-state (display AHDXA)
+                     (state final)))
+) 
+
+(defrule eou-op-cl-tf-smcnca ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw No)
+         (eou-aff-op-nw-mp SMCNC)
+   )
+
+   =>
+      (assert (UI-state (display SMCNCA)
+                     (state final)))
+) 
+
+
+(defrule eou-op-cl-nw-extr ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw Yes)
+   )
+
+   =>
+
+   (assert (UI-state (display TriSou)
+                     (relation-asserted eou-aff-op-nw-tri)
+                     (response Eh)
+                     (valid-answers Eh Cool))))
+
+(defrule eou-op-cl-tf-extr-c ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw Yes)
+         (eou-aff-op-nw-tri Cool)
+   )
+
+   =>
+      (assert (UI-state (display CubePro)
+                     (state final)))
+) 
+
+
+(defrule eou-op-cl-nw-nextr ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw Yes)
+         (eou-aff-op-nw-tri Eh)
+   )
+
+   =>
+
+   (assert (UI-state (display DEBBV)
+                     (relation-asserted eou-aff-op-nw-eh)
+                     (response No)
+                     (valid-answers No Yes))))
+
+(defrule eou-op-cl-tf-nextr-yes ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw Yes)
+         (eou-aff-op-nw-tri Eh)
+         (eou-aff-op-nw-eh Yes)
+   )
+
+   =>
+      (assert (UI-state (display LFCXL)
+                     (state final)))
+) 
+
+(defrule eou-op-cl-tf-nextr-no ""
+(logical (first-choice EoU)
+         (affordability No)
+         (eou-aff-op Yes)
+         (eou-aff-op-cl NW)
+         (eou-aff-op-nw Yes)
+         (eou-aff-op-nw-tri Eh)
+         (eou-aff-op-nw-eh No)
+   )
+
+   =>
+      (assert (UI-state (display LFCHS)
+                     (state final)))
+) 
+
+(defrule eou-aff ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability Yes))
+
+   =>
+
+   (assert (UI-state (display EasevsBV)
+                     (relation-asserted eou-affy)
+                     (response EoU)
+                     (valid-answers EoU BVolume))))
+
+(defrule eou-affeou ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy EoU)
+   )
+
+   =>
+      (assert (UI-state (display DremIde)
+                     (state final)))
+) 
+
+(defrule eou-affbv ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability Yes)
+            (eou-affy BVolume))
+
+   =>
+
+   (assert (UI-state (display OpenSouP)
+                     (relation-asserted eou-affn)
+                     (response NDC)
+                     (valid-answers NDC Yes))))
+
+(defrule eou-affbv-op ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability Yes)
+            (eou-affy BVolume)
+            (eou-affn Yes))
+
+   =>
+
+   (assert (UI-state (display DualExtrusionQuest)
+                     (relation-asserted eou-affn-opy)
+                     (response No)
+                     (valid-answers No Yes))))
+
+(defrule eou-affeou-sol4 ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn Yes)
+         (eou-affn-opy No)
+   )
+
+   =>
+      (assert (UI-state (display Sol4)
+                     (state final)))
+) 
+
+(defrule eou-affbv-op-ext ""
+
+   (logical 
+         (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn Yes)
+         (eou-affn-opy Yes))
+
+   =>
+
+   (assert (UI-state (display sDEBBV)
+                     (relation-asserted eou-affn-opy-exty)
+                     (response No)
+                     (valid-answers No Yes))))
+
+(defrule eou-affbv-op-extn ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn Yes)
+         (eou-affn-opy Yes)
+         (eou-affn-opy-exty No)
+   )
+
+   =>
+      (assert (UI-state (display SWA)
+                     (state final)))
+) 
+
+(defrule eou-affbv-op-exty ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn Yes)
+         (eou-affn-opy Yes)
+         (eou-affn-opy-exty Yes)
+   )
+
+   =>
+      (assert (UI-state (display SW)
+                     (state final)))
+) 
+
+(defrule eou-affbv-ndc ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability Yes)
+            (eou-affy BVolume)
+            (eou-affn NDC))
+
+   =>
+
+   (assert (UI-state (display DualExtrusionQuest)
+                     (relation-asserted eou-affn-ndca)
+                     (response No)
+                     (valid-answers No Yes))))
+(defrule eou-affbv-ndcay ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn NDC)
+         (eou-affn-ndca Yes)
+   )
+
+   =>
+      (assert (UI-state (display DaV)
+                     (state final)))
+) 
+
+(defrule eou-affbv-ndcano ""
+
+   (logical 
+            (first-choice EoU)
+            (affordability Yes)
+            (eou-affy BVolume)
+            (eou-affn NDC)
+            (eou-affn-ndca No))
+
+   =>
+
+   (assert (UI-state (display SSou)
+                     (relation-asserted eou-affn-ndc-no)
+                     (response Eh)
+                     (valid-answers Eh Cool))))
+
+(defrule eou-affbv-ndcano-c ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn NDC)
+         (eou-affn-ndca No)
+         (eou-affn-ndc-no Cool)
+   )
+
+   =>
+      (assert (UI-state (display DaV1A)
+                     (state final)))
+) 
+
+(defrule eou-affbv-ndcano-e ""
+(logical (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn NDC)
+         (eou-affn-ndca No)
+         (eou-affn-ndc-no Eh)
+   )
+
+   =>
+      (assert (UI-state (display DaV1)
+                     (state final)))
+) 
+
 ;;;*************************
 ;;;* GUI INTERACTION RULES *
 ;;;*************************
@@ -468,4 +1004,3 @@
    (modify ?f2 (current ?p))
    
    (halt))
-   
