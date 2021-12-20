@@ -84,8 +84,23 @@
 ;; dual extursion
 (defrule dual-extrusion-question ""
 
-   (logical (affordability Yes)
-            (first-choice UHPQ))
+   (or
+      (logical (affordability Yes)
+               (first-choice UHPQ))
+      (logical
+         (first-choice EoU)
+         (affordability No)
+         (makerBot Yes)
+         (makerBot-cl NW)
+      )
+      (logical 
+            (first-choice EoU)
+            (affordability Yes)
+            (eou-affy BVolume)
+            (eou-affn ?)
+      )
+   )
+   
 
    =>
 
@@ -103,6 +118,10 @@
             (affordability No)
             ) 
       )
+      (logical 
+            (first-choice EoU)
+            (affordability No)
+      )
    )
    =>
 
@@ -111,13 +130,20 @@
                      (response No)
                      (valid-answers No Yes))))                     
 
-;; DIY vs assembled
+;; DIY vs assembled 
 (defrule DIY-assembled-question""
-   (logical 
-      (first-choice BBV)
-      (affordability Yes)
-      (really-big-build RBig)
+   (or
+      (logical 
+         (first-choice BBV)
+         (affordability Yes)
+         (really-big-build RBig)
+      )
+      (logical 
+         (first-choice Modd)
+         (affordability ?)
+      )
    )
+   
    =>
 
    (assert (UI-state (display DIYvsAss)
@@ -126,17 +152,31 @@
                      (valid-answers Kit Ass))))   
 
 ;; big build volume
-; (defrule big-build-question ""
+(defrule big-build-question ""
 
-   
-   
+   (or
+      (logical 
+         (first-choice EoU)
+         (affordability No)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
+         (dual-extrusion-tri Eh)
+      )
+      (logical 
+         (first-choice EoU)
+         (affordability Yes)
+         (eou-affy BVolume)
+         (eou-affn Yes)
+         (dual-extrusion Yes)
+      )
+   )
+   =>
 
-;    =>
-
-;    (assert (UI-state (display BigBuildVolume)
-;                      (relation-asserted big-build)
-;                      (response No)
-;                      (valid-answers No Yes))))  
+   (assert (UI-state (display BigBuildVolume)
+                     (relation-asserted big-build)
+                     (response No)
+                     (valid-answers No Yes))))  
 
 ;; really big build volume
 (defrule really-big-build-question ""
@@ -310,30 +350,11 @@
          (assert (UI-state (display SMCRMv2)
                         (state final)))
 )
-
- 
- 
- 
- 
  ;;;druga na lewo
- 
-(defrule DIY-kit ""
-
-   (logical 
-            (first-choice Modd)
-            (or (affordability Yes) (affordability No)))
-
-   =>
-
-   (assert (UI-state (display DIYvsAss)
-                     (relation-asserted mod-diy)
-                     (response Kit)
-                     (valid-answers Kit Ass))))   
-
 (defrule noaf-ass ""
    (logical (first-choice Modd)
          (affordability No)
-         (mod-diy Ass)
+         (DIY-ass Ass)
       )
 
       =>
@@ -343,7 +364,7 @@
 (defrule noaf-kit ""
    (logical (first-choice Modd)
          (affordability No)
-         (mod-diy Kit)
+         (DIY-ass Kit)
       )
 
       =>
@@ -354,7 +375,7 @@
 (defrule af-ass ""
    (logical (first-choice Modd)
          (affordability Yes)
-         (mod-diy Ass)
+         (DIY-ass Ass)
       )
 
       =>
@@ -365,9 +386,10 @@
 (defrule af-kit ""
 
    (logical 
-            (first-choice Modd)
-            (affordability Yes)
-            (mod-diy Kit))
+      (first-choice Modd)
+      (affordability Yes)
+      (DIY-ass Kit)
+   )
 
    =>
 
@@ -379,7 +401,7 @@
 (defrule af-kit-speed ""
    (logical (first-choice Modd)
          (affordability Yes)
-         (mod-diy Kit)
+         (DIY-ass Kit)
          (mod-diy-bvps Speed)
       )
 
@@ -393,7 +415,7 @@
    (logical 
             (first-choice Modd)
             (affordability Yes)
-            (mod-diy Kit)
+            (DIY-ass Kit)
             (mod-diy-bvps BVolume))
 
    =>
@@ -406,7 +428,7 @@
 (defrule af-kit-vol-LOT ""
 (logical (first-choice Modd)
       (affordability Yes)
-      (mod-diy Kit)
+      (DIY-ass Kit)
       (mod-diy-bvps BVolume)
       (mod-diy-bvps-bvL LOTM)
    )
@@ -421,7 +443,7 @@
    (logical 
             (first-choice Modd)
             (affordability Yes)
-            (mod-diy Kit)
+            (DIY-ass Kit)
             (mod-diy-bvps BVolume)
             (mod-diy-bvps-bvL LMore))
 
@@ -435,7 +457,7 @@
 (defrule af-kit-vol-LOT-Comm ""
 (logical (first-choice Modd)
       (affordability Yes)
-      (mod-diy Kit)
+      (DIY-ass Kit)
       (mod-diy-bvps BVolume)
       (mod-diy-bvps-bvL LMore)
       (mod-diy-bvps-bvL-mpmm Cmm)
@@ -449,7 +471,7 @@
 (defrule af-kit-vol-LOT-Cmp ""
 (logical (first-choice Modd)
       (affordability Yes)
-      (mod-diy Kit)
+      (DIY-ass Kit)
       (mod-diy-bvps BVolume)
       (mod-diy-bvps-bvL LMore)
       (mod-diy-bvps-bvL-mpmm Cmp)
@@ -460,24 +482,10 @@
                      (state final)))
 ) 
 
- ;srodek                     
-(defrule eou-fol ""
-
-   (logical 
-            (first-choice EoU)
-            (affordability No))
-
-   =>
-
-   (assert (UI-state (display OposedToMakerBot)
-                     (relation-asserted eou-aff-op)
-                     (response No)
-                     (valid-answers No Yes))))
-
 (defrule eou-nop ""
 (logical (first-choice EoU)
          (affordability No)
-         (eou-aff-op No)
+         (makerBot No)
    )
 
    =>
@@ -490,21 +498,21 @@
    (logical 
          (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
+         (makerBot Yes)
    )
 
    =>
 
    (assert (UI-state (display MakClone)
-                     (relation-asserted eou-aff-op-cl)
+                     (relation-asserted makerBot-cl)
                      (response NW)
                      (valid-answers NW TF))))
 
 (defrule eou-op-cl-tf ""
 (logical (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl TF)
+         (makerBot Yes)
+         (makerBot-cl TF)
    )
 
    =>
@@ -512,80 +520,21 @@
                      (state final)))
 ) 
 
-(defrule eou-op-cl-nw ""
-
-   (logical 
-         (first-choice EoU)
-         (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-   )
-
-   =>
-
-   (assert (UI-state (display DualExtrusionQuest)
-                     (relation-asserted eou-aff-op-nw)
-                     (response No)
-                     (valid-answers No Yes))))
-
 (defrule eou-op-cl-nw-pick ""
 
    (logical 
          (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw No)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion No)
    )
 
    =>
 
    (assert (UI-state (display MakePick)
-                     (relation-asserted eou-aff-op-nw-mp)
-                     (response Lfrog)
-                     (valid-answers Lfrog AHDX SMCNC))))
-
-(defrule eou-op-cl-tf-lfrog ""
-(logical (first-choice EoU)
-         (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw No)
-         (eou-aff-op-nw-mp Lfrog)
-   )
-
-   =>
-      (assert (UI-state (display LfrogA)
                      (state final)))
-) 
-
-(defrule eou-op-cl-tf-ahdx ""
-(logical (first-choice EoU)
-         (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw No)
-         (eou-aff-op-nw-mp AHDX)
-   )
-
-   =>
-      (assert (UI-state (display AHDXA)
-                     (state final)))
-) 
-
-(defrule eou-op-cl-tf-smcnca ""
-(logical (first-choice EoU)
-         (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw No)
-         (eou-aff-op-nw-mp SMCNC)
-   )
-
-   =>
-      (assert (UI-state (display SMCNCA)
-                     (state final)))
-) 
+)
 
 
 (defrule eou-op-cl-nw-extr ""
@@ -593,25 +542,25 @@
    (logical 
          (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw Yes)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
    )
 
    =>
 
    (assert (UI-state (display TriSou)
-                     (relation-asserted eou-aff-op-nw-tri)
+                     (relation-asserted dual-extrusion-tri)
                      (response Eh)
                      (valid-answers Eh Cool))))
 
 (defrule eou-op-cl-tf-extr-c ""
 (logical (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw Yes)
-         (eou-aff-op-nw-tri Cool)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
+         (dual-extrusion-tri Cool)
    )
 
    =>
@@ -625,27 +574,27 @@
    (logical 
          (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw Yes)
-         (eou-aff-op-nw-tri Eh)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
+         (dual-extrusion-tri Eh)
    )
 
    =>
 
-   (assert (UI-state (display DEBBV)
-                     (relation-asserted eou-aff-op-nw-eh)
+   (assert (UI-state (display BigBuildVolume)
+                     (relation-asserted big-build )
                      (response No)
                      (valid-answers No Yes))))
 
 (defrule eou-op-cl-tf-nextr-yes ""
 (logical (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw Yes)
-         (eou-aff-op-nw-tri Eh)
-         (eou-aff-op-nw-eh Yes)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
+         (dual-extrusion-tri Eh)
+         (big-build  Yes)
    )
 
    =>
@@ -656,11 +605,11 @@
 (defrule eou-op-cl-tf-nextr-no ""
 (logical (first-choice EoU)
          (affordability No)
-         (eou-aff-op Yes)
-         (eou-aff-op-cl NW)
-         (eou-aff-op-nw Yes)
-         (eou-aff-op-nw-tri Eh)
-         (eou-aff-op-nw-eh No)
+         (makerBot Yes)
+         (makerBot-cl NW)
+         (dual-extrusion Yes)
+         (dual-extrusion-tri Eh)
+         (big-build  No)
    )
 
    =>
@@ -706,27 +655,13 @@
                      (response NDC)
                      (valid-answers NDC Yes))))
 
-(defrule eou-affbv-op ""
-
-   (logical 
-            (first-choice EoU)
-            (affordability Yes)
-            (eou-affy BVolume)
-            (eou-affn Yes))
-
-   =>
-
-   (assert (UI-state (display DualExtrusionQuest)
-                     (relation-asserted eou-affn-opy)
-                     (response No)
-                     (valid-answers No Yes))))
 
 (defrule eou-affeou-sol4 ""
 (logical (first-choice EoU)
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn Yes)
-         (eou-affn-opy No)
+         (dual-extrusion No)
    )
 
    =>
@@ -734,29 +669,14 @@
                      (state final)))
 ) 
 
-(defrule eou-affbv-op-ext ""
-
-   (logical 
-         (first-choice EoU)
-         (affordability Yes)
-         (eou-affy BVolume)
-         (eou-affn Yes)
-         (eou-affn-opy Yes))
-
-   =>
-
-   (assert (UI-state (display sDEBBV)
-                     (relation-asserted eou-affn-opy-exty)
-                     (response No)
-                     (valid-answers No Yes))))
 
 (defrule eou-affbv-op-extn ""
 (logical (first-choice EoU)
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn Yes)
-         (eou-affn-opy Yes)
-         (eou-affn-opy-exty No)
+         (dual-extrusion Yes)
+         (big-build No)
    )
 
    =>
@@ -769,8 +689,8 @@
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn Yes)
-         (eou-affn-opy Yes)
-         (eou-affn-opy-exty Yes)
+         (dual-extrusion Yes)
+         (big-build Yes)
    )
 
    =>
@@ -778,26 +698,12 @@
                      (state final)))
 ) 
 
-(defrule eou-affbv-ndc ""
-
-   (logical 
-            (first-choice EoU)
-            (affordability Yes)
-            (eou-affy BVolume)
-            (eou-affn NDC))
-
-   =>
-
-   (assert (UI-state (display DualExtrusionQuest)
-                     (relation-asserted eou-affn-ndca)
-                     (response No)
-                     (valid-answers No Yes))))
 (defrule eou-affbv-ndcay ""
 (logical (first-choice EoU)
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn NDC)
-         (eou-affn-ndca Yes)
+         (dual-extrusion Yes)
    )
 
    =>
@@ -812,7 +718,7 @@
             (affordability Yes)
             (eou-affy BVolume)
             (eou-affn NDC)
-            (eou-affn-ndca No))
+            (dual-extrusion No))
 
    =>
 
@@ -826,7 +732,7 @@
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn NDC)
-         (eou-affn-ndca No)
+         (dual-extrusion No)
          (eou-affn-ndc-no Cool)
    )
 
@@ -840,7 +746,7 @@
          (affordability Yes)
          (eou-affy BVolume)
          (eou-affn NDC)
-         (eou-affn-ndca No)
+         (dual-extrusion No)
          (eou-affn-ndc-no Eh)
    )
 
